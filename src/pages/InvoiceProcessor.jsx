@@ -1,26 +1,44 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import VendorSelect from "../components/VendorSelect";
-import PromptInput from "../components/PromptInput";
-import ImageUploader from "../components/ImageUploader";
-import JsonDisplay from "../components/JsonDisplay";
-import ProcessButton from "../components/ProcessButton";
+import PromptInput from "../components/Prompt";
+import ImageUploader from "../components/ImageUpload";
+import JsonDisplay from "../components/Response";
+import ProcessButton from "../components/Validate";
+// import './App.css';
 
 export default function InvoiceProcessor() {
+  const [vendors, setVendors] = useState([]);
   const [selectedVendor, setSelectedVendor] = useState("");
   const [prompt, setPrompt] = useState("");
   const [image, setImage] = useState(null);
-  const [jsonResponse, setJsonResponse] = useState(null);
+  const [response, setResponse] = useState(null);
 
-  const vendors = ["Vendor A", "Vendor B", "Vendor C"]; // Dummy data
+  // Fetch vendors list from backend
+  useEffect(() => {
+    axios
+      .get("http://127.0.0.1:5000/vendors")
+      .then((response) => setVendors(response.data))
+      .catch((error) => console.error("Error fetching vendors:", error));
+  }, []);
 
-  const handleProcess = () => {
-    setJsonResponse({
-      invoiceNumber: "INV-12345",
-      vendor: selectedVendor,
-      totalAmount: "$500.00",
-      date: "2024-02-11",
-      status: "Processed",
-    });
+  // Handle the image (or PDF) upload and text extraction
+  const handleValidate = () => {
+    const formData = new FormData();
+    formData.append("vendor", selectedVendor);
+    formData.append("prompt", prompt);
+    if (image) formData.append("image", image);
+
+    // Send the image to backend for text extraction and validation
+    axios
+      .post("http://127.0.0.1:5000/validate", formData)
+      .then((response) => {
+        setResponse(response.data);
+      })
+      .catch((error) => {
+        console.error("Error during validation:", error);
+        setResponse({ error: "Error during validation." });
+      });
   };
 
   return (
@@ -29,28 +47,36 @@ export default function InvoiceProcessor() {
       <div className="w-1/2 p-6 bg-white shadow-lg rounded-lg border border-gray-300">
         <h1 className="text-2xl font-bold text-blue-700 mb-6">Invoice Processor</h1>
 
+        {/* Vendor Select */}
         <div className="mb-4">
           <label className="block text-gray-700 font-semibold mb-1">Select Vendor</label>
-          <VendorSelect vendors={vendors} selectedVendor={selectedVendor} setSelectedVendor={setSelectedVendor} />
+          <VendorSelect
+            vendors={vendors}
+            selectedVendor={selectedVendor}
+            setSelectedVendor={setSelectedVendor}
+          />
         </div>
 
+        {/* Prompt Input */}
         <div className="mb-4">
           <label className="block text-gray-700 font-semibold mb-1">Enter Prompt</label>
           <PromptInput prompt={prompt} setPrompt={setPrompt} />
         </div>
 
+        {/* Image Upload */}
         <div className="mb-4">
           <label className="block text-gray-700 font-semibold mb-1">Upload Invoice</label>
           <ImageUploader setImage={setImage} />
         </div>
 
-        <ProcessButton handleProcess={handleProcess} />
+        {/* Process Button */}
+        <ProcessButton handleProcess={handleValidate} />
       </div>
 
-      {/* Right Column */}
+      {/* Right Column - Display Response */}
       <div className="w-1/2 p-6 bg-white shadow-lg rounded-lg border border-gray-300 ml-4">
-        <h2 className="text-xl font-semibold text-blue-700 mb-4">Extracted Data</h2>
-        <JsonDisplay jsonResponse={jsonResponse} />
+        <h2 className="text-xl font-semibold text-blue-700 mb-4">Response</h2>
+        {response && <JsonDisplay jsonResponse={response} />}
       </div>
     </div>
   );
