@@ -5,7 +5,7 @@ export default function ImageUploader({ setImage }) {
     <input
       type="file"
       className="w-full p-2 border border-gray-300 rounded-md"
-      accept="image/*"
+      accept="image/*,application/pdf"
       onChange={(e) => setImage(e.target.files[0])}
     />
   );

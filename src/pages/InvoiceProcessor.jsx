@@ -5,7 +5,7 @@ import PromptInput from "../components/Prompt";
 import ImageUploader from "../components/ImageUpload";
 import JsonDisplay from "../components/Response";
 import ProcessButton from "../components/Validate";
-// import './App.css';
+import Save from "../components/Save";
 
 export default function InvoiceProcessor() {
   const [vendors, setVendors] = useState([]);
@@ -23,23 +23,25 @@ export default function InvoiceProcessor() {
   }, []);
 
   // Handle the image (or PDF) upload and text extraction
-  const handleValidate = () => {
-    const formData = new FormData();
-    formData.append("vendor", selectedVendor);
-    formData.append("prompt", prompt);
-    if (image) formData.append("image", image);
+  const handleValidate = async () => {
+  const formData = new FormData();
+  formData.append("vendor", selectedVendor);
+  formData.append("prompt", prompt);  // If no prompt is entered, it's passed as an empty string
+  if (image) formData.append("image", image);
 
-    // Send the image to backend for text extraction and validation
-    axios
-      .post("http://127.0.0.1:5000/validate", formData)
-      .then((response) => {
-        setResponse(response.data);
-      })
-      .catch((error) => {
-        console.error("Error during validation:", error);
-        setResponse({ error: "Error during validation." });
-      });
-  };
+  try {
+    const response = await axios.post("http://127.0.0.1:5000/validate", formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    setResponse(response.data); // Update the state with the response
+  } catch (error) {
+    console.error("Error during validation:", error);
+    setResponse({ error: "Error during validation." });
+  }
+};
+
 
   return (
     <div className="flex h-screen p-6 bg-gradient-to-r from-gray-100 to-blue-50">
@@ -74,10 +76,14 @@ export default function InvoiceProcessor() {
       </div>
 
       {/* Right Column - Display Response */}
-      <div className="w-1/2 p-6 bg-white shadow-lg rounded-lg border border-gray-300 ml-4">
+      <div className=" w-1/2 p-6 bg-white shadow-lg rounded-lg border border-gray-300 ml-4">
         <h2 className="text-xl font-semibold text-blue-700 mb-4">Response</h2>
         {response && <JsonDisplay jsonResponse={response} />}
+      <div>
+      <Save/>
+      </div>
       </div>
     </div>
+      
   );
 }
