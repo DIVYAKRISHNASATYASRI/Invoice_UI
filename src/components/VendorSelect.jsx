@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-export default function VendorSelect() {
+export default function VendorSelect({ onVendorSelect }) {
   const [vendors, setVendors] = useState([]);  // List of all vendors
   const [selectedVendor, setSelectedVendor] = useState('');  // Selected vendor's ID
   const [vendorInput, setVendorInput] = useState('');  // Vendor input value
@@ -44,9 +44,14 @@ export default function VendorSelect() {
   // Handle the selection of an existing vendor from the dropdown
   const handleVendorSelect = (vendor) => {
     setVendorInput(vendor.name); // Set the input to the selected vendor's name
-    setSelectedVendor(vendor.id); // Set the selected vendor ID
+    setSelectedVendor(vendor.id); // Set the selected vendor's ID
     setFilteredVendors([]); // Clear the dropdown list after selection
     setIsNewVendor(false); // It's an existing vendor
+
+    // Pass the vendor ID (not the name) to the parent component
+    if (onVendorSelect) {
+      onVendorSelect(vendor.id);  // Pass the vendor ID, not the name
+    }
   };
 
   // Handle adding a new vendor to the list
@@ -80,6 +85,32 @@ export default function VendorSelect() {
     }
   };
 
+  // Handle deleting a vendor
+  const handleDeleteVendor = async () => {
+    if (!selectedVendor) {
+      alert('Please select a vendor to delete');
+      return;
+    }
+
+    try {
+      const response = await fetch(`http://localhost:5000/delete_vendor/${selectedVendor}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        alert('Vendor deleted successfully');
+        setVendorInput('');  // Clear input field
+        setSelectedVendor('');  // Clear selected vendor
+        fetchVendors();  // Refresh the vendor list after deletion
+      } else {
+        alert('Error deleting vendor');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('An error occurred while deleting the vendor');
+    }
+  };
+
   return (
     <div className="relative flex items-center space-x-4 w-full">
       {/* Input field */}
@@ -99,6 +130,25 @@ export default function VendorSelect() {
         Add Vendor
       </button>
 
+      {/* Delete Vendor button (SVG icon) */}
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        className="h-6 w-6 text-red-500 cursor-pointer"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        onClick={handleDeleteVendor}  // Delete vendor when clicked
+      >
+        <path d="M3 6h18" />
+        <path d="M8 6V4h8v2" />
+        <path d="M19 6l-1 14H6L5 6" />
+        <path d="M10 11v6" />
+        <path d="M14 11v6" />
+      </svg>
+
       {/* Show the filtered vendor list as a dropdown below the input */}
       {filteredVendors.length > 0 && (
         <ul className="absolute w-full mt-1 max-h-60 overflow-y-auto bg-white border border-gray-300 rounded-md z-10">
@@ -113,6 +163,6 @@ export default function VendorSelect() {
           ))}
         </ul>
       )}
-    </div>
-  );
+    </div>
+  );
 }

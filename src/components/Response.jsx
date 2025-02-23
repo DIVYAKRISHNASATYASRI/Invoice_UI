@@ -47,9 +47,9 @@ const JsonDisplay = ({ jsonResponse }) => {
                 const pages = JSON.parse(jsonResponse.pages)
                  return (
                      <div>
-                      {/*Code if is working correctly! This is the RAW content with JSON Formatter now with more code (3 steps for all tests) !*/}
+                      {/Code if is working correctly! This is the RAW content with JSON Formatter now with more code (3 steps for all tests) !/}
                          <p>Formatted JSON: check those  test  and test or what you want {dataFormatter(jsonResponse)}</p>
-                        {/*It Works!!! For data and for everything! You can have this here!*/}
+                        {/It Works!!! For data and for everything! You can have this here!/}
                         <pre style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>{jsonResponse.pages} </pre>
                      </div>
                  );
@@ -88,7 +88,7 @@ const JsonDisplay = ({ jsonResponse }) => {
                 backgroundColor: "#f3f4f6",
                 borderRadius: "8px",
                 border: "1px solid #d1d5db",
-                maxHeight: "400px",
+                maxHeight: "300px",
                 overflow: "auto",
                 fontSize: isMobile ? "12px" : "14px",
                 whiteSpace: "pre-wrap",
@@ -102,4 +102,4 @@ const JsonDisplay = ({ jsonResponse }) => {
     );
 };
 
-export default JsonDisplay;
+export default JsonDisplay;
