@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate, NavLink } from "react-router-dom";
 import InvoiceProcessor from "./pages/InvoiceProcessor";
 import Dashboard from "./pages/Dashboard";
-import LoginPage from "./pages/Loginpage";
+import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 // import PricingPage from "./pages/PricingPage";
 import Loader from "./components/UI/Loader";
