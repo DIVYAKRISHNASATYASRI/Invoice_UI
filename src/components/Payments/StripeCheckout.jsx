@@ -12,7 +12,7 @@ export default function StripeCheckout() {
     const createCheckoutSession = async () => {
       setLoading(true);
       try {
-        const response = await axios.post("http://localhost:5000/create-checkout-session", { planId });
+        const response = await axios.post("https://invoice-api-9xlf.onrender.com/create-checkout-session", { planId });
         const { url } = response.data;
         window.location.href = url; // Redirect to Stripe checkout
       } catch (error) {

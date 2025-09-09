@@ -17,7 +17,7 @@ const AnalyticsCharts = () => {
   const [analyticsData, setAnalyticsData] = useState([]);
 
   useEffect(() => {
-    axios.get("http://localhost:5000/analytics")
+    axios.get("https://invoice-api-9xlf.onrender.com/analytics")
       .then((res) => setAnalyticsData(res.data))
       .catch((err) => console.error("Error fetching analytics:", err));
   }, []);

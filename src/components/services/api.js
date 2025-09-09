@@ -1,7 +1,7 @@
 // services/api.js
 import axios from "axios";
 
-const API_BASE_URL = "http://127.0.0.1:5000"; // Change if your backend is hosted elsewhere
+const API_BASE_URL = "https://invoice-api-9xlf.onrender.com"; // Change if your backend is hosted elsewhere
 
 const api = axios.create({
   baseURL: API_BASE_URL,

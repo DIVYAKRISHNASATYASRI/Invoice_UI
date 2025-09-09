@@ -18,7 +18,7 @@ export default function InvoiceProcessor({ setLoading, setToast }) {
   useEffect(() => {
     setLoading(true);
     axios
-      .get("http://127.0.0.1:5000/vendors")
+      .get("https://invoice-api-9xlf.onrender.com/vendors")
       .then(res => setVendors(res.data))
       .catch(err => setToast({ message: "Failed to fetch vendors", type: "error" }))
       .finally(() => setLoading(false));
@@ -42,7 +42,7 @@ export default function InvoiceProcessor({ setLoading, setToast }) {
 
     try {
       setLoading(true);
-      const res = await axios.post("http://127.0.0.1:5000/validate", formData, {
+      const res = await axios.post("https://invoice-api-9xlf.onrender.com/validate", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       setResponse(res.data);
