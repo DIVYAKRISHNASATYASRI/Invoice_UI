@@ -5,13 +5,13 @@ import InvoiceProcessor from "./pages/InvoiceProcessor";
 import Dashboard from "./pages/Dashboard";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
-// import PricingPage from "./pages/PricingPage";
 import Loader from "./components/UI/Loader";
 import Toast from "./components/UI/Toast";
 import SubscriptionPlans from "./components/Payments/SubscriptionPlans";
 import StripeCheckout from "./components/Payments/StripeCheckout";
 import PaymentSuccess from "./components/Payments/PaymentSuccess";
 import PaymentCancel from "./components/Payments/PaymentCancel";
+import LandingPage from "./pages/LandingPage";
 
 function ProtectedRoute({ user, children }) {
   if (!user) return <Navigate to="/login" replace />;
@@ -43,8 +43,8 @@ function App() {
   return (
     <Router>
       <div className="min-h-screen bg-gray-50 transition-colors duration-300">
-        {/* Navbar */}
-        <nav className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-4 flex justify-between items-center shadow-lg">
+        {/* ✅ Navbar (Fixed) */}
+        <nav className="fixed top-0 left-0 w-full z-50 bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-4 flex justify-between items-center shadow-lg">
           <div className="flex items-center space-x-2">
             <img src="/invoice.jpg" alt="Logo" className="w-10 h-10 rounded-full shadow-md" />
             <h1 className="font-extrabold text-2xl tracking-wide text-yellow-300 drop-shadow-lg">
@@ -108,25 +108,31 @@ function App() {
         {/* Loader */}
         {loading && <Loader size={60} />}
 
-        {/* Toast Notification */}
+        {/* Toast */}
         {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
 
-        {/* Page Content */}
-        <div className="p-6">
+        {/* Routes */}
+        <div className="pt-24 px-6">
           <Routes>
+            {/* Landing Page */}
+            <Route path="/" element={<LandingPage />} />
+
+            {/* Auth Pages */}
             <Route path="/login" element={<LoginPage onAuth={handleAuth} setToast={setToast} />} />
             <Route path="/register" element={<RegisterPage onAuth={handleAuth} setToast={setToast} />} />
+
+            {/* App Pages */}
             <Route path="/dashboard" element={<ProtectedRoute user={user}><Dashboard /></ProtectedRoute>} />
-            {/* <Route path="/pricing" element={<PricingPage />} /> */}
             <Route path="/process" element={<ProtectedRoute user={user}><InvoiceProcessor setLoading={setLoading} setToast={setToast} /></ProtectedRoute>} />
 
-            {/* Payment Routes */}
+            {/* Payments */}
             <Route path="/subscriptions" element={<ProtectedRoute user={user}><SubscriptionPlans /></ProtectedRoute>} />
             <Route path="/checkout/:planId" element={<ProtectedRoute user={user}><StripeCheckout /></ProtectedRoute>} />
             <Route path="/success" element={<PaymentSuccess />} />
             <Route path="/cancel" element={<PaymentCancel />} />
 
-            <Route path="*" element={<Navigate to="/login" replace />} />
+            {/* Default */}
+            <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </div>
       </div>
